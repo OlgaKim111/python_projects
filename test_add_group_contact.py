@@ -4,12 +4,13 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest
 from group import Group
+from contact import Contact
 
 
 class TestAddGroup(unittest.TestCase):
     def setUp(self):
         self.wd = webdriver.Firefox(executable_path="/Users/olgakim/PycharmProjects/python_projects/geckodriver")
-        self.wd.implicitly_wait(60)
+        self.wd.implicitly_wait(30)
 
     def test_add_group(self):
         wd = self.wd
@@ -29,6 +30,30 @@ class TestAddGroup(unittest.TestCase):
 
         self.return_to_group_page(wd)
         self.logout(wd)
+
+    def test_add_contact(self):
+        wd = self.wd
+        self.open_home_page(wd)
+        self.login(wd, username="admin", password="secret")
+        self.open_new_contact_page(wd)
+        self.add_new_contact(wd, Contact(firstname="Bob", lastname="Marley"))
+        self.return_to_homepage(wd)
+        self.logout(wd)
+
+    def add_new_contact(self, wd, contact):
+        wd.find_element_by_name("firstname").click()
+        wd.find_element_by_name("firstname").clear()
+        wd.find_element_by_name("firstname").send_keys(contact.firstname)
+        wd.find_element_by_name("lastname").click()
+        wd.find_element_by_name("lastname").clear()
+        wd.find_element_by_name("lastname").send_keys(contact.lastname)
+        wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
+
+    def return_to_homepage(self, wd):
+        wd.find_element_by_link_text("home").click()
+
+    def open_new_contact_page(self, wd):
+        wd.find_element_by_link_text("add new").click()
 
     def logout(self, wd):
         wd.find_element_by_link_text("Logout").click()
